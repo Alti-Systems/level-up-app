@@ -5,14 +5,16 @@ import { LEVELS } from '@/lib/levels'
 import { ChevronLeft, Star } from 'lucide-react'
 
 // Level Components
-import { IcebergLevel } from '@/components/levels/IcebergLevel'
-import { FeelingsLevel } from '@/components/levels/FeelingsLevel'
-import { SayItRightLevel } from '@/components/levels/SayItRightLevel'
-import { TrustLevel } from '@/components/levels/TrustLevel'
-import { AwesomeLevel } from '@/components/levels/AwesomeLevel'
-import { FriendLevel } from '@/components/levels/FriendLevel'
-import { ChillLevel } from '@/components/levels/ChillLevel'
-import { DealLevel } from '@/components/levels/DealLevel'
+import { 
+  IcebergLevel,
+  FeelingsLevel,
+  SayItRightLevel,
+  TrustLevel,
+  AwesomeLevel,
+  FriendLevel,
+  ChillLevel,
+  DealLevel 
+} from '@/components/levels'
 
 const levelComponents: Record<number, React.ComponentType<{ onComplete: () => void }>> = {
   1: IcebergLevel,
