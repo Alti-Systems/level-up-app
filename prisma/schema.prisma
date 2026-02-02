@@ -1,0 +1,217 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  avatarUrl     String?
+  role          UserRole  @default(CHILD)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Subscription
+  stripeCustomerId     String?   @unique
+  subscriptionId       String?
+  subscriptionStatus   SubscriptionStatus @default(INACTIVE)
+  subscriptionPlan     SubscriptionPlan?
+  subscriptionEndDate  DateTime?
+  
+  // Relations
+  progress      UserProgress?
+  moodLogs      MoodLog[]
+  icebergEntries IcebergEntry[]
+  awesomeLogs   AwesomeLog[]
+  trustLogs     TrustLog[]
+  missions      MissionCompletion[]
+  parentLink    ParentChildLink? @relation("ChildUser")
+  children      ParentChildLink[] @relation("ParentUser")
+  
+  @@index([email])
+  @@index([stripeCustomerId])
+}
+
+enum UserRole {
+  CHILD
+  PARENT
+  ADMIN
+}
+
+enum SubscriptionStatus {
+  INACTIVE
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  TRIALING
+}
+
+enum SubscriptionPlan {
+  CHILD_MONTHLY
+  CHILD_YEARLY
+  PARENT_MONTHLY
+  PARENT_YEARLY
+  BUNDLE_MONTHLY
+  BUNDLE_YEARLY
+}
+
+// ============================================
+// PARENT-CHILD LINKING
+// ============================================
+
+model ParentChildLink {
+  id        String   @id @default(cuid())
+  parentId  String
+  childId   String   @unique
+  createdAt DateTime @default(now())
+  
+  parent    User     @relation("ParentUser", fields: [parentId], references: [id], onDelete: Cascade)
+  child     User     @relation("ChildUser", fields: [childId], references: [id], onDelete: Cascade)
+  
+  @@unique([parentId, childId])
+  @@index([parentId])
+}
+
+// ============================================
+// PROGRESS TRACKING
+// ============================================
+
+model UserProgress {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Stats
+  totalStars      Int      @default(0)
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastActiveDate  DateTime?
+  
+  // Level completion (stored as JSON array of level IDs)
+  completedLevels Int[]    @default([])
+  earnedBadges    Int[]    @default([])
+  
+  // Current progress within levels
+  levelProgress   Json     @default("{}")
+  
+  // Calm down kit preferences
+  calmDownKit     Json     @default("{}")
+  
+  // Selected qualities from Level 5
+  myQualities     String[] @default([])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+// ============================================
+// ACTIVITY LOGS
+// ============================================
+
+model MoodLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  emoji     String
+  intensity Int      // 1-10
+  trigger   String?
+  note      String?
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model IcebergEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  behavior  String   // What people saw
+  feeling   String   // How I really felt
+  need      String   // What I actually needed
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+}
+
+model AwesomeLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  action    String   // What I did
+  quality   String   // The quality it shows
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+}
+
+model TrustLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  action    String   // What I did
+  coins     Int      // +1, +2, -1, -2 etc
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+}
+
+// ============================================
+// MISSION TRACKING
+// ============================================
+
+model MissionCompletion {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  levelId   Int
+  missionId String
+  data      Json?    // Any data related to mission completion
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, levelId, missionId])
+  @@index([userId])
+}
+
+// ============================================
+// SHARE TRACKING
+// ============================================
+
+model ParentShareLink {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  childUserId String
+  
+  clicked     Boolean  @default(false)
+  converted   Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+  
+  @@index([code])
+  @@index([childUserId])
+}

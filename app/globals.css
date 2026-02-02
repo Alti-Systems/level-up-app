@@ -1,0 +1,193 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 px-6 rounded-xl font-bold text-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-gray-800 py-3 px-5 rounded-xl font-medium border-2 border-gray-200 transition-all hover:border-orange-400 hover:bg-orange-50;
+  }
+  
+  .card {
+    @apply bg-white rounded-2xl p-4 shadow-lg;
+  }
+  
+  .card-interactive {
+    @apply card transition-all hover:scale-105 cursor-pointer;
+  }
+  
+  .input-field {
+    @apply w-full p-3 border-2 border-gray-200 rounded-xl focus:border-orange-400 outline-none transition-colors;
+  }
+  
+  .badge {
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .badge-earned {
+    @apply bg-gradient-to-r from-yellow-400 to-orange-500 text-white;
+  }
+  
+  .badge-locked {
+    @apply bg-gray-200 text-gray-400;
+  }
+  
+  .level-card {
+    @apply relative p-4 rounded-2xl text-left transition-all transform hover:scale-105 shadow-lg;
+  }
+  
+  .progress-bar {
+    @apply h-3 bg-white/30 rounded-full overflow-hidden;
+  }
+  
+  .progress-fill {
+    @apply h-full bg-yellow-400 rounded-full transition-all duration-500;
+  }
+  
+  .star-counter {
+    @apply flex items-center gap-2 bg-white/20 rounded-full px-4 py-2;
+  }
+  
+  .emoji-button {
+    @apply text-4xl p-3 rounded-xl transition-all hover:scale-110;
+  }
+  
+  .emoji-button-selected {
+    @apply bg-blue-200 scale-110;
+  }
+  
+  .quiz-option {
+    @apply w-full p-4 rounded-xl text-left transition-all bg-white border-2 border-gray-200 hover:border-blue-400;
+  }
+  
+  .quiz-option-correct {
+    @apply bg-green-100 border-2 border-green-500;
+  }
+  
+  .quiz-option-incorrect {
+    @apply bg-red-100 border-2 border-red-500;
+  }
+  
+  .activity-card {
+    @apply bg-white rounded-xl p-4 border-2 border-gray-200;
+  }
+  
+  .tip-box {
+    @apply bg-blue-100 rounded-xl p-4 text-blue-800 text-sm;
+  }
+  
+  .success-box {
+    @apply bg-green-100 rounded-xl p-4 text-green-800;
+  }
+  
+  .warning-box {
+    @apply bg-orange-100 rounded-xl p-4 text-orange-800;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-500;
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes star-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes confetti {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-star-pop {
+  animation: star-pop 0.5s ease-out forwards;
+}
+
+/* Ensure mobile viewport works correctly */
+html {
+  height: -webkit-fill-available;
+}
+
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
